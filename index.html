@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="arcade.css" />
+  <link rel="stylesheet" href="arcade.css?v=2" />
 </head>
 <body>
 
@@ -48,6 +48,7 @@
       <span class="hud-chip" id="hudCoins" title="coins">🪙 0</span>
       <span class="hud-chip" id="hudAch" title="achievements">🏆 0/7</span>
       <button class="hud-chip hud-btn" id="sndBtn" title="toggle sound">♪ ON</button>
+      <button class="hud-chip hud-btn" id="bgmBtn" title="toggle music">♫ OFF</button>
     </div>
   </header>
 
@@ -81,7 +82,7 @@
 
     <!-- ======= STATS ======= -->
     <section class="zone" id="stats">
-      <h2 class="zone-title reveal"><span class="zone-no">ZONE 1</span>PLAYER STATS</h2>
+      <h2 class="zone-title reveal"><span class="zone-no">ZONE 1</span><span class="zt">PLAYER STATS</span></h2>
       <div class="stat-grid">
         <div class="big-stat reveal">
           <span class="big-stat-num" data-target="50" data-suffix="M+">0</span>
@@ -113,7 +114,7 @@
 
     <!-- ======= QUESTS ======= -->
     <section class="zone" id="quests">
-      <h2 class="zone-title reveal"><span class="zone-no">ZONE 2</span>QUEST LOG</h2>
+      <h2 class="zone-title reveal"><span class="zone-no">ZONE 2</span><span class="zt">QUEST LOG</span></h2>
 
       <div class="quest reveal quest-main">
         <div class="quest-head">
@@ -163,7 +164,7 @@
 
     <!-- ======= INVENTORY (GAMES) ======= -->
     <section class="zone" id="inventory">
-      <h2 class="zone-title reveal"><span class="zone-no">ZONE 3</span>INVENTORY <span class="zone-sub">// games i've shipped</span></h2>
+      <h2 class="zone-title reveal"><span class="zone-no">ZONE 3</span><span class="zt">INVENTORY</span> <span class="zone-sub">// games i've shipped</span></h2>
 
       <div class="inv-grid">
         <a class="item legendary reveal" href="https://www.roblox.com/games/16022043457/Draw-Perfect-Circle" target="_blank" rel="noopener">
@@ -237,11 +238,19 @@
 
     <!-- ======= MINI-GAME ======= -->
     <section class="zone" id="minigame">
-      <h2 class="zone-title reveal"><span class="zone-no">BOSS</span>DRAW A PERFECT CIRCLE</h2>
+      <h2 class="zone-title reveal"><span class="zone-no">BOSS</span><span class="zt">DRAW A PERFECT CIRCLE</span></h2>
       <p class="zone-lede reveal">
         My flagship game has 40,000,000 plays. Here's a tiny version —
         draw a circle in one stroke. <b>90%+ unlocks an achievement.</b>
       </p>
+      <div class="boss-bar reveal">
+        <div class="boss-info">
+          <span class="boss-name" id="bossName">☠ BOSS: THE PERFECT CIRCLE</span>
+          <span class="boss-hp-num" id="bossHpNum">HP 100/100</span>
+        </div>
+        <div class="boss-track"><div class="boss-fill" id="bossFill"></div></div>
+      </div>
+
       <div class="game-wrap reveal">
         <canvas id="circleGame" width="480" height="480"></canvas>
         <div class="game-side">
@@ -262,7 +271,7 @@
 
     <!-- ======= SIDE QUESTS ======= -->
     <section class="zone" id="sidequests">
-      <h2 class="zone-title reveal"><span class="zone-no">ZONE 4</span>SIDE QUESTS <span class="zone-sub">// beyond games</span></h2>
+      <h2 class="zone-title reveal"><span class="zone-no">ZONE 4</span><span class="zt">SIDE QUESTS</span> <span class="zone-sub">// beyond games</span></h2>
 
       <a class="sq reveal" href="https://github.com/Aaron-Zhang128/BigData2025" target="_blank" rel="noopener">
         <span class="sq-icon">📊</span>
@@ -294,7 +303,7 @@
 
     <!-- ======= CONTACT ======= -->
     <section class="zone contact" id="contact">
-      <h2 class="zone-title reveal"><span class="zone-no">FINAL</span>MULTIPLAYER LOBBY</h2>
+      <h2 class="zone-title reveal"><span class="zone-no">FINAL</span><span class="zt">MULTIPLAYER LOBBY</span></h2>
       <p class="zone-lede reveal">Open to internships & new-grad roles. Invite me to your party:</p>
 
       <div class="lobby reveal">
@@ -320,7 +329,7 @@
         </a>
       </div>
 
-      <p class="konami-hint reveal">psst… ↑ ↑ ↓ ↓ ← → ← → B A</p>
+      <p class="konami-hint reveal">psst… ↑ ↑ ↓ ↓ ← → ← → B A &nbsp;·&nbsp; press [ ` ] for terminal &nbsp;·&nbsp; click empty space to shoot</p>
     </section>
   </main>
 
@@ -329,9 +338,22 @@
     <span id="footStats">THANKS FOR PLAYING</span>
   </footer>
 
+  <!-- custom cursor -->
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+  <!-- hacker terminal -->
+  <div class="terminal" id="terminal" hidden>
+    <div class="term-head">AARON_OS v2.0 — guest shell &nbsp;·&nbsp; [`] or [ESC] to close</div>
+    <div class="term-out" id="termOut"></div>
+    <div class="term-line">
+      <span class="term-prompt">guest@aaron.dev:~$</span>
+      <input id="termIn" autocomplete="off" autocapitalize="off" spellcheck="false" />
+    </div>
+  </div>
+
   <!-- toasts -->
   <div class="toasts" id="toasts" aria-live="polite"></div>
 
-  <script src="arcade.js"></script>
+  <script src="arcade.js?v=2"></script>
 </body>
 </html>

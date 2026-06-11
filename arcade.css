@@ -701,6 +701,132 @@ main, .footer { position: relative; z-index: 2; }
 body.party main, body.party .hud, body.party .quicknav { animation: hue 2.2s linear infinite; }
 @keyframes hue { to { filter: hue-rotate(360deg); } }
 
+/* ================= CUSTOM CURSOR ================= */
+body.has-cursor, body.has-cursor * { cursor: none !important; }
+.cursor {
+  position: fixed;
+  top: -14px; left: -14px;
+  width: 28px; height: 28px;
+  z-index: 500;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.cursor::before, .cursor::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transition: transform 0.18s, border-color 0.18s;
+}
+.cursor::before {
+  border: 2px solid var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+.cursor::after {
+  width: 4px; height: 4px;
+  top: 12px; left: 12px;
+  background: var(--cyan);
+  border-radius: 50%;
+}
+.cursor.hot::before {
+  transform: scale(1.55) rotate(45deg);
+  border-radius: 4px;
+  border-color: var(--pink);
+  box-shadow: 0 0 14px rgba(255, 45, 149, 0.6);
+}
+.cursor.down::before { transform: scale(0.75); }
+
+/* ================= TERMINAL ================= */
+.terminal {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: min(46vh, 420px);
+  z-index: 400;
+  background: rgba(4, 1, 12, 0.96);
+  border-top: 2px solid var(--green);
+  box-shadow: 0 -10px 50px rgba(61, 255, 140, 0.15);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--px);
+  font-size: 0.6rem;
+  line-height: 2.1;
+  color: var(--green);
+  animation: termIn 0.22s ease-out;
+}
+@keyframes termIn { from { transform: translateY(100%); } }
+.term-head {
+  padding: 10px 18px;
+  border-bottom: 1px solid rgba(61, 255, 140, 0.25);
+  color: rgba(61, 255, 140, 0.6);
+  font-size: 0.5rem;
+}
+.term-out { flex: 1; overflow-y: auto; padding: 14px 18px; white-space: pre; }
+.term-banner { color: var(--cyan); }
+.term-echo { color: rgba(244, 241, 255, 0.75); }
+.term-ok { color: var(--yellow); }
+.term-err { color: var(--pink); }
+.term-line { display: flex; gap: 10px; padding: 10px 18px; border-top: 1px solid rgba(61,255,140,0.25); }
+.term-prompt { color: rgba(61, 255, 140, 0.7); white-space: nowrap; }
+.term-line input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--green);
+  font-family: var(--px);
+  font-size: 0.6rem;
+  caret-color: var(--green);
+}
+
+/* ================= BOSS BAR ================= */
+.boss-bar { margin-bottom: 34px; max-width: 640px; }
+.boss-info {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.boss-name { font-family: var(--px); font-size: 0.62rem; color: var(--pink); }
+.boss-hp-num { font-family: var(--px); font-size: 0.55rem; color: var(--muted); }
+.boss-track {
+  height: 20px;
+  border: 3px solid var(--text);
+  padding: 3px;
+  background: rgba(0, 0, 0, 0.5);
+}
+.boss-fill {
+  height: 100%;
+  width: 100%;
+  background: repeating-linear-gradient(90deg, var(--pink) 0 12px, #c41e6f 12px 24px);
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.boss-fill.dead { background: repeating-linear-gradient(90deg, var(--green) 0 12px, #1fae5e 12px 24px); }
+
+/* ================= CARD GLARE (3D tilt assist) ================= */
+.item { transform-style: preserve-3d; will-change: transform; }
+.item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(320px circle at var(--gx, 50%) var(--gy, 0%), rgba(255, 255, 255, 0.12), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.item:hover::before { opacity: 1; }
+
+/* ================= SCREEN SHAKE ================= */
+main.shake { animation: shake 0.4s; }
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 3px); }
+  40% { transform: translate(5px, -4px); }
+  60% { transform: translate(-4px, -2px); }
+  80% { transform: translate(3px, 4px); }
+}
+
 /* ================= REVEAL ================= */
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
 .reveal.visible { opacity: 1; transform: none; }
