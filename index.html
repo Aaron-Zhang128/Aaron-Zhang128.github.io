@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="arcade.css?v=2" />
+  <link rel="stylesheet" href="arcade.css?v=3" />
 </head>
 <body>
 
@@ -25,8 +25,12 @@
     </div>
   </div>
 
-  <!-- ======= BACKGROUND CANVAS ======= -->
+  <!-- ======= BACKGROUND CANVAS + NEBULAE ======= -->
   <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="nebula nebula-1" aria-hidden="true"></div>
+  <div class="nebula nebula-2" aria-hidden="true"></div>
+  <div class="nebula nebula-3" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
 
   <!-- ======= HUD ======= -->
   <header class="hud" id="hud">
@@ -329,7 +333,7 @@
         </a>
       </div>
 
-      <p class="konami-hint reveal">psst… ↑ ↑ ↓ ↓ ← → ← → B A &nbsp;·&nbsp; press [ ` ] for terminal &nbsp;·&nbsp; click empty space to shoot</p>
+      <p class="konami-hint reveal">psst… ↑ ↑ ↓ ↓ ← → ← → B A &nbsp;·&nbsp; click empty space to shoot</p>
     </section>
   </main>
 
@@ -341,19 +345,23 @@
   <!-- custom cursor -->
   <div class="cursor" id="cursor" aria-hidden="true"></div>
 
-  <!-- hacker terminal -->
-  <div class="terminal" id="terminal" hidden>
-    <div class="term-head">AARON_OS v2.0 — guest shell &nbsp;·&nbsp; [`] or [ESC] to close</div>
-    <div class="term-out" id="termOut"></div>
-    <div class="term-line">
-      <span class="term-prompt">guest@aaron.dev:~$</span>
-      <input id="termIn" autocomplete="off" autocapitalize="off" spellcheck="false" />
+  <!-- hyperspace entry + film outro -->
+  <div class="cine" id="cine" hidden aria-hidden="true">
+    <div class="cbar cbar-t"></div>
+    <div class="cbar cbar-b"></div>
+    <div class="cflash"></div>
+    <div class="flare"></div>
+    <div class="rec">● REC <span id="recTime">00:00:00:00</span></div>
+    <div class="slate">
+      <span class="slate-fin">FIN.</span>
+      <span class="slate-sub">AARON ZHANG · 2026</span>
     </div>
+    <div class="hardcut"></div>
   </div>
 
   <!-- toasts -->
   <div class="toasts" id="toasts" aria-live="polite"></div>
 
-  <script src="arcade.js?v=2"></script>
+  <script src="arcade.js?v=3"></script>
 </body>
 </html>

@@ -707,7 +707,7 @@ body.has-cursor, body.has-cursor * { cursor: none !important; }
   position: fixed;
   top: -14px; left: -14px;
   width: 28px; height: 28px;
-  z-index: 500;
+  z-index: 1200;
   pointer-events: none;
   transition: opacity 0.2s;
 }
@@ -736,47 +736,221 @@ body.has-cursor, body.has-cursor * { cursor: none !important; }
 }
 .cursor.down::before { transform: scale(0.75); }
 
-/* ================= TERMINAL ================= */
-.terminal {
+/* ================= NEBULAE + VIGNETTE ================= */
+.nebula {
   position: fixed;
-  inset: auto 0 0 0;
-  height: min(46vh, 420px);
-  z-index: 400;
-  background: rgba(4, 1, 12, 0.96);
-  border-top: 2px solid var(--green);
-  box-shadow: 0 -10px 50px rgba(61, 255, 140, 0.15);
-  display: flex;
+  border-radius: 50%;
+  filter: blur(110px);
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 2.8s ease 0.4s;
+}
+body.entered .nebula { opacity: 1; }
+.nebula-1 {
+  width: 60vw; height: 60vw;
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.30), transparent 70%);
+  top: -22vw; left: -14vw;
+  animation: drift1 46s ease-in-out infinite;
+}
+.nebula-2 {
+  width: 52vw; height: 52vw;
+  background: radial-gradient(circle, rgba(255, 45, 149, 0.20), transparent 70%);
+  bottom: -18vw; right: -12vw;
+  animation: drift2 58s ease-in-out infinite;
+}
+.nebula-3 {
+  width: 34vw; height: 34vw;
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.14), transparent 70%);
+  top: 36%; left: 56%;
+  animation: drift1 70s ease-in-out infinite reverse;
+}
+@keyframes drift1 { 50% { transform: translate(7vw, 5vh) scale(1.15); } }
+@keyframes drift2 { 50% { transform: translate(-6vw, -6vh) scale(0.9); } }
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 52%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+/* ================= CINEMATIC TITLE SEQUENCE ================= */
+.cine {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  pointer-events: none;
+}
+.cine.on { pointer-events: auto; }
+.cbar {
+  position: absolute;
+  left: 0; right: 0;
+  height: 0;
+  background: #000;
+  transition: height 0.65s cubic-bezier(0.7, 0, 0.3, 1);
+}
+.cbar-t { top: 0; }
+.cbar-b { bottom: 0; }
+.cine.on .cbar { height: 16vh; }
+/* light-speed flash at arrival */
+.cflash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, #fff 0%, rgba(0, 229, 255, 0.85) 30%, transparent 72%);
+  opacity: 0;
+  pointer-events: none;
+}
+.cine.flash .cflash { animation: lightspeed 0.9s ease-out both; }
+@keyframes lightspeed {
+  0% { opacity: 0; transform: scale(0.3); }
+  12% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+
+/* camera under acceleration while warping */
+body.warping main {
+  transform: scale(1.06);
+  filter: blur(2px) brightness(1.15) saturate(1.3);
+  transition: transform 1.2s cubic-bezier(0.5, 0, 0.9, 0.4), filter 1.2s ease-in;
+}
+main {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease-out;
+}
+
+/* ============ FILM OUTRO: shots, cuts, slate ============ */
+/* film-only props stay hidden during the hyperspace intro */
+.cine .flare, .cine .rec, .cine .slate, .cine .hardcut { display: none; }
+.cine.film .flare, .cine.film .rec, .cine.film .hardcut { display: block; }
+.cine.film .slate { display: flex; }
+
+/* SHOT A — slow push-in, warm grade */
+body.outro-a main {
+  transform: scale(1.075) translateY(-12px);
+  transform-origin: 50% 74%;
+  filter: saturate(1.4) contrast(1.06) brightness(1.04);
+  transition: transform 2.5s cubic-bezier(0.32, 0, 0.45, 1), filter 2.5s ease;
+}
+.contact .zone-title { transition: transform 2.5s cubic-bezier(0.32, 0, 0.45, 1), text-shadow 2.5s; }
+body.outro-a .contact .zone-title {
+  transform: scale(1.07);
+  text-shadow: 3px 3px 0 rgba(255, 45, 149, 0.55), 0 0 44px rgba(0, 229, 255, 0.5);
+}
+
+/* SHOT B — crane pull-out, cool grade */
+body.outro-b main {
+  transform: scale(0.93) translateY(20px);
+  transform-origin: 50% 58%;
+  filter: saturate(1.12) hue-rotate(-14deg) brightness(1.14) contrast(1.04);
+  transition: transform 2.1s cubic-bezier(0.25, 0, 0.3, 1), filter 2.1s ease;
+}
+
+/* hard cut: one full black frame */
+.hardcut {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  background: #000;
+  opacity: 0;
+}
+.cine.cut .hardcut { opacity: 1; }
+
+/* anamorphic lens flare sweep */
+.flare {
+  position: absolute;
+  top: 47%;
+  left: -60%;
+  width: 55%;
+  height: 3px;
+  z-index: 4;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.9), #fff, rgba(0, 229, 255, 0.9), transparent);
+  box-shadow: 0 0 26px 5px rgba(0, 229, 255, 0.5), 0 0 90px 24px rgba(0, 229, 255, 0.22);
+  filter: blur(1px);
+  opacity: 0;
+}
+.cine.shot-b .flare { animation: flareSweep 1.75s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both; }
+@keyframes flareSweep {
+  0% { left: -60%; opacity: 0; }
+  14% { opacity: 1; }
+  86% { opacity: 1; }
+  100% { left: 115%; opacity: 0; }
+}
+
+/* ● REC + timecode */
+.rec {
+  position: absolute;
+  top: calc(16vh + 18px);
+  right: 28px;
+  z-index: 5;
+  font-family: var(--px);
+  font-size: 0.55rem;
+  color: #ff3b3b;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 10px rgba(255, 59, 59, 0.8);
+  animation: recBlink 1.1s steps(2) infinite;
+}
+.rec span {
+  color: rgba(244, 241, 255, 0.85);
+  text-shadow: none;
+  margin-left: 10px;
+}
+@keyframes recBlink { 50% { opacity: 0.4; } }
+
+/* end slate */
+.slate {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  background: #000;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
   font-family: var(--px);
-  font-size: 0.6rem;
-  line-height: 2.1;
-  color: var(--green);
-  animation: termIn 0.22s ease-out;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
-@keyframes termIn { from { transform: translateY(100%); } }
-.term-head {
-  padding: 10px 18px;
-  border-bottom: 1px solid rgba(61, 255, 140, 0.25);
-  color: rgba(61, 255, 140, 0.6);
-  font-size: 0.5rem;
+.cine.slate-on .slate { opacity: 1; }
+.slate-fin {
+  font-size: clamp(1.8rem, 5.5vw, 3.4rem);
+  color: var(--text);
+  text-shadow: 5px 5px 0 var(--pink);
 }
-.term-out { flex: 1; overflow-y: auto; padding: 14px 18px; white-space: pre; }
-.term-banner { color: var(--cyan); }
-.term-echo { color: rgba(244, 241, 255, 0.75); }
-.term-ok { color: var(--yellow); }
-.term-err { color: var(--pink); }
-.term-line { display: flex; gap: 10px; padding: 10px 18px; border-top: 1px solid rgba(61,255,140,0.25); }
-.term-prompt { color: rgba(61, 255, 140, 0.7); white-space: nowrap; }
-.term-line input {
-  flex: 1;
-  background: none;
-  border: none;
-  outline: none;
-  color: var(--green);
-  font-family: var(--px);
-  font-size: 0.6rem;
-  caret-color: var(--green);
+.slate-sub {
+  font-size: 0.52rem;
+  color: var(--muted);
+  letter-spacing: 0.34em;
 }
+
+/* ================= HERO CINEMATIC ENTRANCE ================= */
+.hero { will-change: transform, opacity; }
+.hero .hero-tag, .hero .glitch, .hero .hero-role, .hero .hero-bio, .hero .menu { opacity: 0; }
+body.entered .hero .glitch {
+  opacity: 1;
+  animation: titleSlam 0.55s cubic-bezier(0.16, 1.3, 0.3, 1) both,
+             floatY 7s ease-in-out 1.4s infinite;
+}
+@keyframes titleSlam {
+  0% { opacity: 0; transform: scale(1.7); filter: blur(16px); }
+  60% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes floatY { 50% { transform: translateY(-9px); } }
+body.entered .hero .hero-tag,
+body.entered .hero .hero-role,
+body.entered .hero .hero-bio,
+body.entered .hero .menu {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hero .hero-tag, .hero .hero-role, .hero .hero-bio, .hero .menu { transform: translateY(22px); }
+body.entered .hero .hero-tag { transition-delay: 0.45s; }
+body.entered .hero .hero-role { transition-delay: 0.6s; }
+body.entered .hero .hero-bio { transition-delay: 0.75s; }
+body.entered .hero .menu { transition-delay: 0.9s; }
 
 /* ================= BOSS BAR ================= */
 .boss-bar { margin-bottom: 34px; max-width: 640px; }

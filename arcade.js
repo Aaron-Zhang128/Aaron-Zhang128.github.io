@@ -1,6 +1,6 @@
 /* ====================================================
    AARON ZHANG — PORTFOLIO, BUT IT'S A SPACE GAME
-   warp engine · shooting gallery · terminal · save files
+   warp engine · shooting gallery · cinematic intro · save files
    ==================================================== */
 "use strict";
 
@@ -27,7 +27,6 @@ const ACHIEVEMENTS = {
   perfect:   { icon: "⭕", title: "PERFECTIONIST",     desc: "Scored 90%+ on the circle. Respect." },
   networker: { icon: "🤝", title: "NETWORKER",         desc: "Opened a contact link. Smart move." },
   janitor:   { icon: "🛸", title: "SPACE JANITOR",     desc: "Vaporized 10 asteroids." },
-  hacker:    { icon: "💻", title: "TERMINAL VELOCITY", desc: "Found the hidden terminal." },
   secret:    { icon: "🌈", title: "??? SECRET",        desc: "↑↑↓↓←→←→BA. You know the ways." },
 };
 
@@ -47,7 +46,7 @@ function loadGame() {
     state.level = d.level || 1;
     state.coins = d.coins || 0;
     state.kills = d.kills || 0;
-    (d.unlocked || []).forEach((id) => state.unlocked.add(id));
+    (d.unlocked || []).forEach((id) => { if (ACHIEVEMENTS[id]) state.unlocked.add(id); });
     return true;
   } catch (e) { return false; }
 }
@@ -84,7 +83,46 @@ const sfx = {
   start: () => [392, 523, 659, 784, 1047].forEach((f, i) => beep(f, 0.1, "square", 0.05, i * 0.07)),
   zap: () => { beep(1800, 0.05, "sawtooth", 0.03); beep(900, 0.08, "sawtooth", 0.025, 0.03); },
   boom: () => { beep(110, 0.25, "sawtooth", 0.05); beep(70, 0.35, "triangle", 0.06, 0.05); },
-  key: () => beep(1100 + Math.random() * 300, 0.025, "square", 0.012),
+  warp: () => {
+    if (!state.sound) return;
+    try {
+      const a = ctx();
+      const t = a.currentTime;
+      const o = a.createOscillator();
+      const g = a.createGain();
+      o.type = "sawtooth";
+      o.frequency.setValueAtTime(70, t);
+      o.frequency.exponentialRampToValueAtTime(1500, t + 1.05);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.05, t + 0.85);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
+      o.connect(g).connect(a.destination);
+      o.start(t);
+      o.stop(t + 1.25);
+    } catch (e) { /* silent */ }
+  },
+  braam: () => {
+    if (!state.sound) return;
+    try {
+      const a = ctx();
+      const t = a.currentTime;
+      // detuned low saws swelling together — trailer braam
+      [55, 55.7, 110.3].forEach((f) => {
+        const o = a.createOscillator();
+        const g = a.createGain();
+        o.type = "sawtooth";
+        o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.038, t + 0.55);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 2.3);
+        o.connect(g).connect(a.destination);
+        o.start(t);
+        o.stop(t + 2.4);
+      });
+    } catch (e) { /* silent */ }
+  },
+  thud: () => beep(55, 0.12, "sine", 0.07),
+  chord: () => [262, 330, 392, 523].forEach((f, i) => beep(f, 1.1, "triangle", 0.02, i * 0.07)),
 };
 
 $("#sndBtn").addEventListener("click", () => {
@@ -247,6 +285,41 @@ function startGame() {
   sfx.start();
   addXP(10);
   unlock("start");
+  if (reducedMotion) document.body.classList.add("entered");
+  else runCinematic();
+}
+
+/* ---------------- hyperspace entry: pure motion, no words ---------------- */
+function runCinematic() {
+  const cine = $("#cine");
+  let done = false;
+  let arriveTimer = null;
+
+  cine.hidden = false;
+  document.body.classList.add("warping");
+  requestAnimationFrame(() => cine.classList.add("on"));
+  space.jump();
+  sfx.warp();
+
+  function arrive() {
+    if (done) return;
+    done = true;
+    clearTimeout(arriveTimer);
+    cine.classList.add("flash");
+    document.body.classList.remove("warping");
+    document.body.classList.add("entered");
+    sfx.boom();
+    shake();
+    setTimeout(() => cine.classList.remove("on"), 200);
+    setTimeout(() => { cine.hidden = true; cine.classList.remove("flash"); }, 1100);
+    removeEventListener("click", arrive, true);
+    removeEventListener("keydown", arrive, true);
+  }
+
+  // impatient pilots can drop out of warp early
+  addEventListener("click", arrive, true);
+  addEventListener("keydown", arrive, true);
+  arriveTimer = setTimeout(arrive, 1150);
 }
 $("#pressStart").addEventListener("click", startGame);
 addEventListener("keydown", (e) => {
@@ -457,15 +530,123 @@ const space = (() => {
     }
   }
 
-  return { fire };
+  return { fire, jump: (v = 90) => { warp = v; } };
 })();
 
 /* click-to-shoot (anywhere that isn't interactive) */
 document.addEventListener("click", (e) => {
   if (!document.body.classList.contains("playing")) return;
-  if (e.target.closest("a, button, input, #circleGame, .hud, .quicknav, .terminal, .toast")) return;
+  if (e.target.closest("a, button, input, #circleGame, .hud, .quicknav, .cine, .toast")) return;
+  if (!document.body.classList.contains("entered")) return;
   space.fire(e.clientX, e.clientY);
 });
+
+/* ---------------- film outro: three shots, two cuts, one slate ----------------
+   SHOT A  push-in on the lobby (camera rolling, REC on, braam)
+   CUT     hard black frame
+   SHOT B  crane pull-out, cool grade, anamorphic flare sweep
+   CUT     hard black frame
+   SLATE   "FIN." — then bars lift and the final quest drops            */
+(function finalShot() {
+  if (reducedMotion) return;
+  const target = $("#contact");
+  let played = false;
+  const obs = new IntersectionObserver((ents) => {
+    ents.forEach((en) => {
+      if (!en.isIntersecting || played || !document.body.classList.contains("entered")) return;
+      played = true;
+      obs.disconnect();
+      film();
+    });
+  }, { threshold: 0.45 });
+  obs.observe(target);
+
+  function film() {
+    const cine = $("#cine");
+    const timeEl = $("#recTime");
+    const timers = [];
+    let frames = 0;
+    let rolling = true;
+
+    cine.hidden = false;
+    cine.classList.add("film");
+    requestAnimationFrame(() => cine.classList.add("on"));
+
+    // running 24fps timecode next to the REC dot
+    const tc = setInterval(() => {
+      frames++;
+      const f = frames % 24;
+      const s = ((frames / 24) | 0) % 60;
+      timeEl.textContent = `00:00:${String(s).padStart(2, "0")}:${String(f).padStart(2, "0")}`;
+    }, 42);
+
+    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+
+    function hardCut() {
+      sfx.thud();
+      cine.classList.add("cut");
+      setTimeout(() => cine.classList.remove("cut"), 90);
+    }
+
+    // SHOT A — slow push-in
+    document.body.classList.add("outro-a");
+    sfx.braam();
+    space.jump(16);
+
+    // CUT → SHOT B — crane pull-out with flare sweep
+    at(2000, () => {
+      hardCut();
+      document.body.classList.remove("outro-a");
+      document.body.classList.add("outro-b");
+      cine.classList.add("shot-b");
+      space.jump(26);
+    });
+
+    // CUT → SLATE
+    at(3950, () => {
+      hardCut();
+      cine.classList.add("slate-on");
+      sfx.chord();
+    });
+
+    // wrap party
+    at(5600, wrap);
+
+    function wrap() {
+      if (!rolling) return;
+      rolling = false;
+      timers.forEach(clearTimeout);
+      clearInterval(tc);
+      removeEventListener("click", wrap, true);
+      document.body.classList.remove("outro-a", "outro-b");
+      cine.classList.remove("on", "shot-b", "slate-on", "cut");
+      setTimeout(() => {
+        cine.classList.remove("film");
+        cine.hidden = true;
+        toast("🎬", "FINAL QUEST", "Recruit Aaron to your party. He's right there ↓");
+      }, 700);
+    }
+    // a click anywhere yells "cut!" and skips to the wrap
+    addEventListener("click", wrap, true);
+  }
+})();
+
+/* ---------------- hero cinematic parallax ---------------- */
+(function heroParallax() {
+  if (reducedMotion) return;
+  const hero = document.querySelector(".hero");
+  let ticking = false;
+  addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const p = Math.min(1.2, scrollY / innerHeight);
+      hero.style.transform = `translateY(${scrollY * 0.32}px) scale(${1 - p * 0.06})`;
+      hero.style.opacity = Math.max(0, 1 - p * 1.05);
+      ticking = false;
+    });
+  }, { passive: true });
+})();
 
 /* ---------------- custom cursor ---------------- */
 (function cursor() {
@@ -607,130 +788,6 @@ addEventListener("keydown", (e) => {
     confetti(80);
   }
 });
-
-/* ====================================================
-   HIDDEN TERMINAL  —  press ` to open
-   ==================================================== */
-(function terminal() {
-  const term = $("#terminal");
-  const out = $("#termOut");
-  const input = $("#termIn");
-
-  function print(text, cls = "") {
-    const d = document.createElement("div");
-    if (cls) d.className = cls;
-    d.textContent = text;
-    out.appendChild(d);
-    out.scrollTop = out.scrollHeight;
-  }
-
-  const BANNER = [
-    " █████╗ ███████╗",
-    "██╔══██╗╚══███╔╝   AARON_OS v2.0",
-    "███████║  ███╔╝    50M+ plays · $250K+ shipped",
-    "██╔══██║ ███╔╝     type 'help' to begin",
-    "╚═╝  ╚═╝███████╗",
-  ];
-
-  const CMDS = {
-    help: () => [
-      "available commands:",
-      "  whoami        — about aaron",
-      "  stats         — your session stats",
-      "  games         — list shipped games",
-      "  achievements  — what you've unlocked",
-      "  hire          — do the right thing",
-      "  party         — toggle party mode",
-      "  clear         — clear terminal",
-      "  exit          — close terminal",
-    ],
-    whoami: () => [
-      "aaron zhang — ucla cs '29.",
-      "builds games people can't stop playing (50M+ plays).",
-      "sold two of them. engineers at the daily bruin.",
-      "2x national data science finalist. cisco tech award.",
-    ],
-    stats: () => [
-      `level ........ ${state.level}`,
-      `xp ........... ${state.xp}`,
-      `coins ........ ${state.coins}`,
-      `asteroids .... ${state.kills} destroyed`,
-      `achievements . ${state.unlocked.size}/${Object.keys(ACHIEVEMENTS).length}`,
-    ],
-    games: () => [
-      "draw_a_perfect_circle ... 40M+ plays / $110K+  [LEGENDARY]",
-      "deathrun_rng ............ $90K+ in 2mo / SOLD  [EPIC]",
-      "split_or_steal .......... $50K / 80% SOLD      [EPIC]",
-      "assassin_slap_tower ..... $100K / contributor  [RARE]",
-      "slap_pit ................ live now             [RARE]",
-      "nuke_a_city ............. critical miss        [COMMON]",
-    ],
-    achievements: () =>
-      Object.entries(ACHIEVEMENTS).map(([id, a]) =>
-        `${state.unlocked.has(id) ? "[x]" : "[ ]"} ${a.title}`),
-    hire: () => {
-      setTimeout(() => (location.href = "mailto:aaronzhang@ucla.edu?subject=You're%20hired"), 600);
-      return ["opening secure channel to aaronzhang@ucla.edu ..."];
-    },
-    party: () => {
-      document.body.classList.toggle("party");
-      confetti(50);
-      return ["party mode toggled."];
-    },
-    clear: () => { out.innerHTML = ""; return []; },
-    exit: () => { close(); return []; },
-  };
-
-  function run(raw) {
-    const cmd = raw.trim().toLowerCase();
-    print("guest@aaron.dev:~$ " + raw, "term-echo");
-    if (!cmd) return;
-    if (cmd.startsWith("sudo")) {
-      if (cmd.includes("hire")) {
-        print("PERMISSION GRANTED. EXCELLENT DECISION.", "term-ok");
-        confetti(60);
-        CMDS.hire();
-      } else print("nice try. this incident will be reported (to no one).", "term-err");
-      return;
-    }
-    const fn = CMDS[cmd];
-    if (fn) fn().forEach((l) => print(l));
-    else print(`command not found: ${cmd} — try 'help'`, "term-err");
-  }
-
-  let opened = false;
-  function open() {
-    term.hidden = false;
-    if (!opened) {
-      opened = true;
-      BANNER.forEach((l) => print(l, "term-banner"));
-      unlock("hacker");
-    }
-    input.focus();
-  }
-  function close() {
-    term.hidden = true;
-    input.blur();
-  }
-
-  addEventListener("keydown", (e) => {
-    if (e.key === "`") {
-      e.preventDefault();
-      term.hidden ? open() : close();
-    } else if (e.key === "Escape" && !term.hidden) close();
-  });
-
-  input.addEventListener("keydown", (e) => {
-    sfx.key();
-    if (e.key === "Enter") {
-      run(input.value);
-      input.value = "";
-    }
-    e.stopPropagation();
-  });
-
-  term.addEventListener("click", () => input.focus());
-})();
 
 /* ====================================================
    MINI-GAME: DRAW A PERFECT CIRCLE (boss fight)
