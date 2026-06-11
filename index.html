@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aaron Zhang — Player 1</title>
+  <meta name="description" content="Aaron Zhang: game developer with 50M+ plays, software engineer, UCLA CS '29. Press start." />
+  <meta property="og:title" content="Aaron Zhang — Player 1" />
+  <meta property="og:description" content="50M+ plays. $250K+ revenue. Press start to view this portfolio." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="arcade.css" />
+</head>
+<body>
+
+  <!-- ======= BOOT SCREEN ======= -->
+  <div class="boot" id="boot">
+    <div class="boot-inner">
+      <div class="boot-logo">AARON<span>ZHANG</span></div>
+      <div class="boot-log" id="bootLog"></div>
+      <div class="boot-bar"><div class="boot-bar-fill" id="bootBar"></div></div>
+      <button class="press-start" id="pressStart" hidden>▶ PRESS START</button>
+      <p class="boot-hint" id="bootHint" hidden>recruiters get infinite lives</p>
+    </div>
+  </div>
+
+  <!-- ======= BACKGROUND CANVAS ======= -->
+  <canvas id="bg" aria-hidden="true"></canvas>
+
+  <!-- ======= HUD ======= -->
+  <header class="hud" id="hud">
+    <div class="hud-left">
+      <div class="hud-avatar" aria-hidden="true">
+        <div class="px-face"></div>
+      </div>
+      <div class="hud-id">
+        <span class="hud-name">AARON ZHANG</span>
+        <span class="hud-class">CLASS: GAME DEV</span>
+      </div>
+    </div>
+    <div class="hud-mid">
+      <span class="hud-lv" id="hudLv">LV 1</span>
+      <div class="xp-bar"><div class="xp-fill" id="xpFill"></div></div>
+      <span class="hud-xp" id="hudXp">0 XP</span>
+    </div>
+    <div class="hud-right">
+      <span class="hud-chip" id="hudCoins" title="coins">🪙 0</span>
+      <span class="hud-chip" id="hudAch" title="achievements">🏆 0/7</span>
+      <button class="hud-chip hud-btn" id="sndBtn" title="toggle sound">♪ ON</button>
+    </div>
+  </header>
+
+  <!-- nav -->
+  <nav class="quicknav" id="quicknav">
+    <a href="#stats">STATS</a>
+    <a href="#quests">QUESTS</a>
+    <a href="#inventory">INVENTORY</a>
+    <a href="#minigame">MINI-GAME</a>
+    <a href="#contact">MULTIPLAYER</a>
+  </nav>
+
+  <main>
+
+    <!-- ======= HERO ======= -->
+    <section class="hero">
+      <p class="hero-tag blink">— PLAYER 1 HAS ENTERED THE GAME —</p>
+      <h1 class="glitch" data-text="AARON ZHANG">AARON ZHANG</h1>
+      <p class="hero-role">▸ <span id="typewriter"></span><span class="caret">█</span></p>
+      <p class="hero-bio">
+        I'm a UCLA CS student who builds games that <b>50,000,000+</b> people have played —
+        and I've sold two of them. This portfolio is a game. Scroll to play.
+      </p>
+      <div class="menu">
+        <a href="#inventory" class="menu-item">▶ NEW GAME <small>view my games</small></a>
+        <a href="#quests" class="menu-item">▶ CONTINUE <small>work experience</small></a>
+        <a href="#minigame" class="menu-item">▶ MINI-GAME <small>beat my high score</small></a>
+        <a href="#contact" class="menu-item">▶ MULTIPLAYER <small>hire me</small></a>
+      </div>
+    </section>
+
+    <!-- ======= STATS ======= -->
+    <section class="zone" id="stats">
+      <h2 class="zone-title reveal"><span class="zone-no">ZONE 1</span>PLAYER STATS</h2>
+      <div class="stat-grid">
+        <div class="big-stat reveal">
+          <span class="big-stat-num" data-target="50" data-suffix="M+">0</span>
+          <span class="big-stat-label">TOTAL PLAYS</span>
+        </div>
+        <div class="big-stat reveal">
+          <span class="big-stat-num" data-target="250" data-prefix="$" data-suffix="K+">0</span>
+          <span class="big-stat-label">GOLD EARNED</span>
+        </div>
+        <div class="big-stat reveal">
+          <span class="big-stat-num" data-target="6">0</span>
+          <span class="big-stat-label">GAMES SHIPPED</span>
+        </div>
+        <div class="big-stat reveal">
+          <span class="big-stat-num" data-target="2" data-suffix="×">0</span>
+          <span class="big-stat-label">NATL. FINALIST</span>
+        </div>
+      </div>
+
+      <div class="skill-bars reveal">
+        <div class="skill"><span class="skill-name">LUA / GAME DEV</span><div class="skill-track"><div class="skill-fill" style="--w:96%"></div></div><span class="skill-val">96</span></div>
+        <div class="skill"><span class="skill-name">PYTHON / DATA</span><div class="skill-track"><div class="skill-fill" style="--w:90%"></div></div><span class="skill-val">90</span></div>
+        <div class="skill"><span class="skill-name">JS / REACT</span><div class="skill-track"><div class="skill-fill" style="--w:88%"></div></div><span class="skill-val">88</span></div>
+        <div class="skill"><span class="skill-name">C++ / JAVA</span><div class="skill-track"><div class="skill-fill" style="--w:82%"></div></div><span class="skill-val">82</span></div>
+        <div class="skill"><span class="skill-name">AWS / DOCKER / K8S</span><div class="skill-track"><div class="skill-fill" style="--w:80%"></div></div><span class="skill-val">80</span></div>
+        <div class="skill"><span class="skill-name">SHIPPING THINGS</span><div class="skill-track"><div class="skill-fill" style="--w:99%"></div></div><span class="skill-val">99</span></div>
+      </div>
+    </section>
+
+    <!-- ======= QUESTS ======= -->
+    <section class="zone" id="quests">
+      <h2 class="zone-title reveal"><span class="zone-no">ZONE 2</span>QUEST LOG</h2>
+
+      <div class="quest reveal quest-main">
+        <div class="quest-head">
+          <span class="quest-type">★ MAIN QUEST</span>
+          <span class="quest-status status-active">IN PROGRESS</span>
+        </div>
+        <h3>B.S. Computer Science Engineering — UCLA</h3>
+        <p>Complete the degree. Collect knowledge orbs in Data Structures, Algorithms, and Discrete Math along the way.</p>
+        <div class="quest-progress"><div class="quest-progress-fill" style="--w:25%"></div><span>EST. COMPLETION: JUNE 2029</span></div>
+      </div>
+
+      <div class="quest reveal">
+        <div class="quest-head">
+          <span class="quest-type">⚔ SIDE QUEST → BECAME MAIN INCOME</span>
+          <span class="quest-status status-active">MAY 2025 — NOW</span>
+        </div>
+        <h3>Game Studio Owner — Sole Proprietorship</h3>
+        <p>
+          Founded and run a one-person game studio. Design, code, analytics, monetization — all of it.
+          Built Lua features driven by engagement and HCI data, <b>tripling user growth</b> and improving
+          average playtime <b>2.5–3×</b>. Sold two titles to acquirers.
+        </p>
+        <ul class="loot">
+          <li>+ 50M+ visits</li>
+          <li>+ $250K+ gold</li>
+          <li>+ 2 games acquired</li>
+        </ul>
+      </div>
+
+      <div class="quest reveal">
+        <div class="quest-head">
+          <span class="quest-type">⚔ ACTIVE QUEST</span>
+          <span class="quest-status status-active">SEP 2025 — NOW</span>
+        </div>
+        <h3>Software Engineer — UCLA Daily Bruin</h3>
+        <p>
+          Build and maintain core site features in React for <b>30K+ monthly readers</b>. Containerized
+          production workloads with Docker + Kubernetes on AWS; site stayed up through every traffic spike.
+        </p>
+        <ul class="loot">
+          <li>+ React</li>
+          <li>+ Docker / K8s</li>
+          <li>+ AWS</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======= INVENTORY (GAMES) ======= -->
+    <section class="zone" id="inventory">
+      <h2 class="zone-title reveal"><span class="zone-no">ZONE 3</span>INVENTORY <span class="zone-sub">// games i've shipped</span></h2>
+
+      <div class="inv-grid">
+        <a class="item legendary reveal" href="https://www.roblox.com/games/16022043457/Draw-Perfect-Circle" target="_blank" rel="noopener">
+          <div class="item-rarity">LEGENDARY</div>
+          <div class="item-art"><img src="assets/circle.png" alt="Draw a Perfect Circle game icon" loading="lazy" /></div>
+          <h3>Draw a Perfect Circle</h3>
+          <p class="item-flavor">"A simple idea, executed perfectly, 40 million times."</p>
+          <ul class="item-stats">
+            <li><b>40M+</b> plays</li>
+            <li><b>$110K+</b> lifetime revenue</li>
+            <li><b>Viral</b> growth loop</li>
+          </ul>
+        </a>
+
+        <a class="item epic reveal" href="https://www.roblox.com/games/71475893938303/Deathrun-RNG" target="_blank" rel="noopener">
+          <div class="item-rarity">EPIC · SOLD</div>
+          <div class="item-art"><img src="assets/deathrun-rng.png" alt="Deathrun RNG game icon" loading="lazy" /></div>
+          <h3>Deathrun RNG</h3>
+          <p class="item-flavor">"$90K+ in two months. Then someone made an offer."</p>
+          <ul class="item-stats">
+            <li><b>$90K+</b> in 2 months</li>
+            <li><b>Acquired</b> post-launch</li>
+          </ul>
+        </a>
+
+        <a class="item epic reveal" href="https://www.roblox.com/games/135855140033003/steal" target="_blank" rel="noopener">
+          <div class="item-rarity">EPIC · 80% SOLD</div>
+          <div class="item-art"><img src="assets/split-or-steal.png" alt="Split or Steal game icon" loading="lazy" /></div>
+          <h3>Split or Steal</h3>
+          <p class="item-flavor">"Game theory as a multiplayer game. Players betrayed each other beautifully."</p>
+          <ul class="item-stats">
+            <li><b>$50K</b> revenue</li>
+            <li><b>80% stake</b> acquired</li>
+          </ul>
+        </a>
+
+        <a class="item rare reveal" href="https://www.roblox.com/games/123888021745367/Assassin-Slap-Tower" target="_blank" rel="noopener">
+          <div class="item-rarity">RARE · CO-OP</div>
+          <div class="item-art"><img src="assets/assassin-slap-tower.png" alt="Assassin Slap Tower game icon" loading="lazy" /></div>
+          <h3>Assassin Slap Tower</h3>
+          <p class="item-flavor">"Core contributor on someone else's run. Still counts. The tower got tall."</p>
+          <ul class="item-stats">
+            <li><b>$100K</b> revenue</li>
+            <li><b>Contributor</b> role</li>
+          </ul>
+        </a>
+
+        <a class="item rare reveal" href="https://www.roblox.com/games/77991661680453/Slap-Pit" target="_blank" rel="noopener">
+          <div class="item-rarity">RARE · NEW</div>
+          <div class="item-art"><img src="assets/slap-pit.png" alt="Slap Pit game icon" loading="lazy" /></div>
+          <h3>Slap Pit</h3>
+          <p class="item-flavor">"Fresh drop. Everything five shipped games taught me, in one pit."</p>
+          <ul class="item-stats">
+            <li><b>Live</b> now</li>
+            <li><b>Latest</b> release</li>
+          </ul>
+        </a>
+
+        <a class="item common reveal" href="https://www.roblox.com/games/117143317369237/Nuke-a-City" target="_blank" rel="noopener">
+          <div class="item-rarity">COMMON · CRITICAL MISS</div>
+          <div class="item-art"><img src="assets/nuke-a-city.png" alt="Nuke a City game icon" loading="lazy" /></div>
+          <h3>Nuke a City</h3>
+          <p class="item-flavor">"It flopped. Rolled a 1. Looted the wreckage for lessons and moved on."</p>
+          <ul class="item-stats">
+            <li><b>+10</b> wisdom</li>
+            <li><b>0</b> regrets</li>
+          </ul>
+        </a>
+      </div>
+    </section>
+
+    <!-- ======= MINI-GAME ======= -->
+    <section class="zone" id="minigame">
+      <h2 class="zone-title reveal"><span class="zone-no">BOSS</span>DRAW A PERFECT CIRCLE</h2>
+      <p class="zone-lede reveal">
+        My flagship game has 40,000,000 plays. Here's a tiny version —
+        draw a circle in one stroke. <b>90%+ unlocks an achievement.</b>
+      </p>
+      <div class="game-wrap reveal">
+        <canvas id="circleGame" width="480" height="480"></canvas>
+        <div class="game-side">
+          <div class="game-score-box">
+            <span class="gs-label">SCORE</span>
+            <span class="gs-value" id="gsScore">--</span>
+            <span class="gs-grade" id="gsGrade"></span>
+          </div>
+          <div class="game-score-box">
+            <span class="gs-label">BEST</span>
+            <span class="gs-value gs-best" id="gsBest">--</span>
+          </div>
+          <p class="game-msg" id="gameMsg">draw inside the box ▴</p>
+          <button class="retry-btn" id="retryBtn">↻ CLEAR</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======= SIDE QUESTS ======= -->
+    <section class="zone" id="sidequests">
+      <h2 class="zone-title reveal"><span class="zone-no">ZONE 4</span>SIDE QUESTS <span class="zone-sub">// beyond games</span></h2>
+
+      <a class="sq reveal" href="https://github.com/Aaron-Zhang128/BigData2025" target="_blank" rel="noopener">
+        <span class="sq-icon">📊</span>
+        <div class="sq-body">
+          <h3>Big Data Challenge — 2× National Finalist <span class="sq-badge">CISCO TECH AWARD</span></h3>
+          <p>Lead author of two national-finalist research papers. End-to-end ETL over 600K+ records; ML pipeline over 10K+ data points; funded path to publication. Finalist out of 3,500+ participants.</p>
+        </div>
+        <span class="sq-arrow">→</span>
+      </a>
+
+      <a class="sq reveal" href="https://informo.ca" target="_blank" rel="noopener">
+        <span class="sq-icon">🛡️</span>
+        <div class="sq-body">
+          <h3>Informo AI <span class="sq-badge">GRANT-FUNDED</span></h3>
+          <p>Sole developer of a free AI misinformation & scam detector, fully funded by the Rideau Hall Foundation. Benchmarked and optimized models for a 40% speed-up.</p>
+        </div>
+        <span class="sq-arrow">→</span>
+      </a>
+
+      <a class="sq reveal" href="https://logicle.io" target="_blank" rel="noopener">
+        <span class="sq-icon">🧩</span>
+        <div class="sq-body">
+          <h3>Logicle.io <span class="sq-badge">SOLO BUILD</span></h3>
+          <p>A daily Wordle-style logic puzzle for the web. Designed, built, and shipped alone.</p>
+        </div>
+        <span class="sq-arrow">→</span>
+      </a>
+    </section>
+
+    <!-- ======= CONTACT ======= -->
+    <section class="zone contact" id="contact">
+      <h2 class="zone-title reveal"><span class="zone-no">FINAL</span>MULTIPLAYER LOBBY</h2>
+      <p class="zone-lede reveal">Open to internships & new-grad roles. Invite me to your party:</p>
+
+      <div class="lobby reveal">
+        <a class="lobby-card" href="mailto:aaronzhang@ucla.edu" data-net>
+          <span class="lobby-icon">✉️</span>
+          <span class="lobby-label">SEND MESSAGE</span>
+          <span class="lobby-val">aaronzhang@ucla.edu</span>
+        </a>
+        <a class="lobby-card" href="https://www.linkedin.com/in/yunhe-aaron-zhang/" target="_blank" rel="noopener" data-net>
+          <span class="lobby-icon">🔗</span>
+          <span class="lobby-label">ADD FRIEND</span>
+          <span class="lobby-val">LinkedIn</span>
+        </a>
+        <a class="lobby-card" href="https://github.com/Aaron-Zhang128" target="_blank" rel="noopener" data-net>
+          <span class="lobby-icon">⌨️</span>
+          <span class="lobby-label">VIEW BUILDS</span>
+          <span class="lobby-val">GitHub</span>
+        </a>
+        <a class="lobby-card" href="tel:+14242981489" data-net>
+          <span class="lobby-icon">📞</span>
+          <span class="lobby-label">VOICE CHAT</span>
+          <span class="lobby-val">424-298-1489</span>
+        </a>
+      </div>
+
+      <p class="konami-hint reveal">psst… ↑ ↑ ↓ ↓ ← → ← → B A</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© 2026 AARON ZHANG</span>
+    <span id="footStats">THANKS FOR PLAYING</span>
+  </footer>
+
+  <!-- toasts -->
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="arcade.js"></script>
+</body>
+</html>
