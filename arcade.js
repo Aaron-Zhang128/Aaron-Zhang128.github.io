@@ -541,12 +541,12 @@ document.addEventListener("click", (e) => {
   space.fire(e.clientX, e.clientY);
 });
 
-/* ---------------- film outro: three shots, two cuts, one slate ----------------
-   SHOT A  push-in on the lobby (camera rolling, REC on, braam)
-   CUT     hard black frame
-   SHOT B  crane pull-out, cool grade, anamorphic flare sweep
-   CUT     hard black frame
-   SLATE   "FIN." — then bars lift and the final quest drops            */
+/* ---------------- film outro: the lobby IS the finale ----------------
+   SHOT A     push-in on the lobby title (REC on, braam) — cards hidden
+   CUT        hard black frame
+   SHOWCASE   the four lobby cards warp in from hyperspace one by one,
+              each landing with a boom, shake, shockwave and scramble
+   PULSE      all four glow together — then bars lift and the final quest drops */
 (function finalShot() {
   if (reducedMotion) return;
   const target = $("#contact");
@@ -588,46 +588,81 @@ document.addEventListener("click", (e) => {
       setTimeout(() => cine.classList.remove("cut"), 90);
     }
 
-    // SHOT A — slow push-in
-    document.body.classList.add("outro-a");
+    const cards = [...document.querySelectorAll(".lobby-card")];
+    const lobby = $(".lobby");
+    let landed = 0;
+
+    // SHOT A — cards vanish, slow push-in on the empty lobby
+    document.body.classList.add("lobby-cine", "outro-a");
     sfx.braam();
     space.jump(16);
 
-    // CUT → SHOT B — crane pull-out with flare sweep
-    at(2000, () => {
+    function slam(card) {
+      card.classList.add("slam");
+      landed++;
+      sfx.boom();
+      shake();
+      space.jump(6);
+      const label = card.querySelector(".lobby-label");
+      if (label) setTimeout(() => scramble(label), 280);
+    }
+
+    // CUT → SHOWCASE — cards warp in from hyperspace one by one
+    at(1600, () => {
       hardCut();
       document.body.classList.remove("outro-a");
-      document.body.classList.add("outro-b");
-      cine.classList.add("shot-b");
-      space.jump(26);
     });
+    cards.forEach((card, i) => at(1800 + i * 800, () => slam(card)));
 
-    // CUT → SLATE
-    at(3950, () => {
-      hardCut();
-      cine.classList.add("slate-on");
-      sfx.chord();
+    // all four glow together, then the bars lift on the lobby itself
+    at(1800 + cards.length * 800 + 200, () => {
+      lobby.classList.add("pulse");
+      sfx.levelup();
     });
+    at(1800 + cards.length * 800 + 1400, wrap);
 
-    // wrap party
-    at(5600, wrap);
+    function showAll() {
+      cards.forEach((card) => card.classList.add("slam"));
+      landed = cards.length;
+    }
 
     function wrap() {
       if (!rolling) return;
       rolling = false;
       timers.forEach(clearTimeout);
       clearInterval(tc);
-      removeEventListener("click", wrap, true);
+      removeEventListener("click", onClick, true);
       document.body.classList.remove("outro-a", "outro-b");
-      cine.classList.remove("on", "shot-b", "slate-on", "cut");
+      cine.classList.remove("on", "cut");
       setTimeout(() => {
+        document.body.classList.remove("lobby-cine");
+        lobby.classList.remove("pulse");
+        cards.forEach((card) => card.classList.remove("slam"));
         cine.classList.remove("film");
         cine.hidden = true;
         toast("🎬", "FINAL QUEST", "Recruit Aaron to your party. He's right there ↓");
       }, 700);
     }
-    // a click anywhere yells "cut!" and skips to the wrap
-    addEventListener("click", wrap, true);
+
+    // clicks: on a card, let the link work and end the scene; elsewhere,
+    // fast-forward — first to all cards landed, then straight to the wrap
+    function onClick(e) {
+      if (e.target.closest(".lobby-card")) {
+        setTimeout(wrap, 150);
+        return;
+      }
+      if (landed < cards.length) {
+        timers.forEach(clearTimeout);
+        timers.length = 0;
+        hardCut();
+        document.body.classList.remove("outro-a");
+        showAll();
+        at(1600, wrap);
+      } else {
+        wrap();
+      }
+    }
+    addEventListener("click", onClick, true);
   }
 })();
 

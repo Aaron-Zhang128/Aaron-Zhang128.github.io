@@ -820,11 +820,10 @@ main {
   transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease-out;
 }
 
-/* ============ FILM OUTRO: shots, cuts, slate ============ */
+/* ============ FILM OUTRO: shots, cuts ============ */
 /* film-only props stay hidden during the hyperspace intro */
-.cine .flare, .cine .rec, .cine .slate, .cine .hardcut { display: none; }
+.cine .flare, .cine .rec, .cine .hardcut { display: none; }
 .cine.film .flare, .cine.film .rec, .cine.film .hardcut { display: block; }
-.cine.film .slate { display: flex; }
 
 /* SHOT A — slow push-in, warm grade */
 body.outro-a main {
@@ -898,30 +897,97 @@ body.outro-b main {
 }
 @keyframes recBlink { 50% { opacity: 0.4; } }
 
-/* end slate */
-.slate {
+/* ============ LOBBY CARD SHOWCASE: hyperspace materialization ============ */
+/* no HUD chatter while the camera rolls */
+body.lobby-cine .toasts { opacity: 0; transition: opacity 0.3s; }
+
+/* during the outro the cards vanish, then warp in one by one */
+.lobby { perspective: 1000px; }
+body.lobby-cine .lobby-card { opacity: 0; pointer-events: none; }
+body.lobby-cine .lobby-card.slam {
+  pointer-events: auto;
+  animation: cardWarp 0.7s cubic-bezier(0.18, 0.9, 0.3, 1.2) both;
+}
+@keyframes cardWarp {
+  0% {
+    opacity: 0;
+    transform: translateZ(-1400px) rotateY(540deg) scale(0.05);
+    filter: blur(14px) brightness(3.5) saturate(0.2);
+  }
+  45% {
+    opacity: 1;
+    transform: translateZ(60px) rotateY(28deg) scale(1.18);
+    filter: blur(2px) brightness(2.1);
+    box-shadow: -10px 0 0 rgba(255, 45, 149, 0.8), 10px 0 0 rgba(0, 229, 255, 0.8),
+                0 0 60px rgba(0, 229, 255, 0.6);
+  }
+  62% {
+    transform: translateZ(-18px) rotateY(-12deg) scale(0.96);
+    filter: blur(0) brightness(1.35);
+    box-shadow: -4px 0 0 rgba(255, 45, 149, 0.6), 4px 0 0 rgba(0, 229, 255, 0.6),
+                0 0 36px rgba(0, 229, 255, 0.4);
+  }
+  80% {
+    transform: translateZ(8px) rotateY(4deg) scale(1.04);
+    box-shadow: -1px 0 0 rgba(255, 45, 149, 0.4), 1px 0 0 rgba(0, 229, 255, 0.4),
+                0 0 20px rgba(0, 229, 255, 0.25);
+  }
+  100% {
+    opacity: 1;
+    transform: translateZ(0) rotateY(0) scale(1);
+    filter: none;
+    box-shadow: 0 0 0 rgba(0, 229, 255, 0);
+  }
+}
+
+/* shockwave ring + light sweep on landing */
+.lobby-card { position: relative; }
+.lobby-card::before, .lobby-card::after {
+  content: "";
   position: absolute;
-  inset: 0;
-  z-index: 7;
-  background: #000;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 22px;
-  font-family: var(--px);
+  pointer-events: none;
   opacity: 0;
-  transition: opacity 0.3s;
 }
-.cine.slate-on .slate { opacity: 1; }
-.slate-fin {
-  font-size: clamp(1.8rem, 5.5vw, 3.4rem);
-  color: var(--text);
-  text-shadow: 5px 5px 0 var(--pink);
+.lobby-card::after {
+  inset: -2px;
+  border: 2px solid var(--cyan);
 }
-.slate-sub {
-  font-size: 0.52rem;
-  color: var(--muted);
-  letter-spacing: 0.34em;
+body.lobby-cine .lobby-card.slam::after {
+  animation: shockRing 0.65s ease-out 0.42s both;
+}
+@keyframes shockRing {
+  0% { opacity: 0.9; transform: scale(1); border-color: #fff; }
+  100% { opacity: 0; transform: scale(2.4); border-color: var(--cyan); }
+}
+.lobby-card::before {
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.65) 50%, transparent 70%);
+  background-size: 280% 100%;
+  background-position: 120% 0;
+}
+body.lobby-cine .lobby-card.slam::before {
+  animation: lightSweep 0.55s ease-out 0.5s both;
+}
+@keyframes lightSweep {
+  0% { opacity: 1; background-position: 120% 0; }
+  100% { opacity: 0; background-position: -60% 0; }
+}
+
+/* group pulse once all four have landed */
+body.lobby-cine .lobby.pulse .lobby-card {
+  opacity: 1;
+  pointer-events: auto;
+  animation: lobbyPulse 0.9s ease-out both;
+}
+@keyframes lobbyPulse {
+  0% { border-color: var(--line); box-shadow: none; }
+  30% {
+    border-color: var(--pink);
+    box-shadow: 0 0 34px rgba(255, 45, 149, 0.55), 0 0 80px rgba(0, 229, 255, 0.25);
+    transform: scale(1.03);
+  }
+  100% { border-color: var(--line); box-shadow: none; transform: scale(1); }
 }
 
 /* ================= HERO CINEMATIC ENTRANCE ================= */
